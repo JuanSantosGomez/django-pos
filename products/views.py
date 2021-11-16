@@ -9,6 +9,8 @@ from products.models import Product
 import os
 
 # Create your views here.
+
+
 class PostMultiple(APIView):
     def post(self, request, format=None):
 
