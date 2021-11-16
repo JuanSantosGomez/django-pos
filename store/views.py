@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from store.models import Cart, CartItem, Store
 from store.serializers import CartItemSerializer, CartSerializer, StoreListSerializer, StoreSerializer
-from rest_framework import serializers, status
+from rest_framework import status
 
 # Create your views here.
 

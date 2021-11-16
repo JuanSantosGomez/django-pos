@@ -1,5 +1,3 @@
-from rest_framework.fields import ReadOnlyField
-from productdataset.models import ProductSetObject
 from rest_framework import serializers
 
 
