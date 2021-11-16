@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from store.models import Cart, CartItem
-from store.serializers import CartItemSerializer, CartSerializer
+from store.models import Cart, CartItem, Store
+from store.serializers import CartItemSerializer, CartSerializer, StoreListSerializer, StoreSerializer
 from rest_framework import serializers, status
 
 # Create your views here.
@@ -54,3 +54,19 @@ class CartItemDetail(APIView):
         cartitem = CartItem.objects.get(pk=pk)
         cartitem.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StoreDetail(APIView):
+
+    def get(self, request, pk, format=None):
+        store = Store.objects.get(pk=pk)
+        serializer = StoreSerializer(store)
+        return Response(serializer.data)
+
+
+class StoreList(APIView):
+
+    def get(self, request, format=None):
+        store = Store.objects.all()
+        serializer = StoreListSerializer(store, many=True)
+        return Response(serializer.data)
