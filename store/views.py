@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from store.models import Cart, CartItem
-from store.serializers import CartItemSerializer
+from store.serializers import CartItemSerializer, CartSerializer
 from rest_framework import status
 
 # Create your views here.
@@ -20,6 +20,17 @@ class GetCartItems(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, format=None, **kwargs):
+        cart = Cart.objects.get(pk=self.kwargs['cart'])
+        if type(list(request.data.values())[0]) == bool and len(list(request.data.values())) == 1:
+            serializer = CartSerializer(
+                cart, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_206_PARTIAL_CONTENT)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class CartItemDetail(APIView):

@@ -12,7 +12,7 @@ router.register("api/store/carts", CartViewSet, "carts")
 urlpatterns = [
     path('api/store/cartitems/<cart>',
          GetCartItems.as_view(), name='getcartitems'),
-    path('api/store/cartitems/delete/<pk>',
+    path('api/store/cartitems/items/<pk>',
          CartItemDetail.as_view(), name='cartitems'),
 
 
