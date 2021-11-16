@@ -45,10 +45,12 @@ class CartItem(models.Model):
     price = models.FloatField(null=True, default=0.0)
     quantity = models.PositiveIntegerField()
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    description = models.TextField(default=' ')
 
     def __str__(self):
         return f"Cart-{self.cart.trackingnumber} - {self.product.product.description}"
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args, **kwargs):
         self.price = self.product.price
-        return super(CartItem, self).save(args, kwargs)
+        self.description = self.product.product.description
+        return super(CartItem, self).save(*args, **kwargs)
