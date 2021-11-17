@@ -19,7 +19,7 @@ class GetCartItems(APIView):
         cartitems = CartItem.objects.filter(cart=carts)
         duped = False
         for item in cartitems:
-            if item.id == request.data['product']:
+            if item.product.id == request.data['product']:
                 item.quantity += request.data['quantity']
                 item.save()
                 duped = True
