@@ -1,8 +1,9 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from store.models import Cart, CartItem, Store
 from store.serializers import CartItemSerializer, CartSerializer, StoreListSerializer, StoreSerializer
 from rest_framework import status
+from django.views import generic
 
 # Create your views here.
 
@@ -83,3 +84,28 @@ class StoreList(APIView):
         store = Store.objects.all()
         serializer = StoreListSerializer(store, many=True)
         return Response(serializer.data)
+
+
+class CurrentCarts(generic.ListView):
+
+    template_name = 'store/index.html'
+    model = CartItem
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        new_object_list = []
+
+        for item in context['object_list']:
+
+            diff = [[idx, i] for idx, i in enumerate(
+                new_object_list) if i['cart'] == item.cart]
+            if diff:
+
+                new_object_list[diff[0][0]]['elements'].append(item)
+                new_object_list[diff[0][0]]['total'] += item.subtotal
+            else:
+                new_object_list.append(
+                    {'cart': item.cart, 'elements': [item], 'total': item.subtotal})
+        context['object_list'] = new_object_list
+        return context
