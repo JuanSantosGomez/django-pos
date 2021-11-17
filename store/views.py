@@ -30,10 +30,10 @@ class CurrentCarts(generic.ListView):
             if diff:
 
                 new_object_list[diff[0][0]]['elements'].append(item)
-                new_object_list[diff[0][0]]['total'] += item.subtotal
+
             else:
                 new_object_list.append(
-                    {'cart': item.cart, 'elements': [item], 'total': item.subtotal})
+                    {'cart': item.cart, 'elements': [item]})
         context['object_list'] = new_object_list
 
         return context

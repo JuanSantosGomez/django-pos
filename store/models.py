@@ -1,3 +1,5 @@
+from abc import abstractclassmethod
+import abc
 from django.db import models
 from django.db.models.deletion import SET_NULL
 from django.db.models.fields.related import ForeignKey
@@ -65,8 +67,9 @@ class CartItem(models.Model):
         self.price = self.product.price
         self.subtotal = self.price*self.quantity
         self.description = self.product.product.description
-        self.cart.save()
-        return super(CartItem, self).save(*args, **kwargs)
+        super(CartItem, self).save(*args, **kwargs)
+        a = Cart.objects.get(pk=self.cart.pk)
+        a.save()
 
     def mergediffs(self):
         a = CartItem.objects.filter(
