@@ -34,6 +34,7 @@ class Store(models.Model):
 class Cart(UUIDModel):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     sold = models.BooleanField(default=False)
+    total = models.FloatField(default=0)
 
     def __str__(self):
         return f"{self.trackingnumber}"
@@ -45,6 +46,7 @@ class CartItem(models.Model):
     price = models.FloatField(null=True, default=0.0)
     quantity = models.PositiveIntegerField()
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    subtotal = models.FloatField(default=0)
     description = models.TextField(default=' ')
 
     def __str__(self):
@@ -52,5 +54,6 @@ class CartItem(models.Model):
 
     def save(self, *args, **kwargs):
         self.price = self.product.price
+        self.subtotal = self.price*self.quantity
         self.description = self.product.product.description
         return super(CartItem, self).save(*args, **kwargs)

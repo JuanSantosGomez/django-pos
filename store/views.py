@@ -23,6 +23,8 @@ class GetCartItems(APIView):
                 item.quantity += request.data['quantity']
                 item.save()
                 duped = True
+                carts.total = sum([i.quantity*i.price for i in cartitems])
+                carts.save()
 
         serializero = CartItemSerializer(cartitems, many=True)
 
@@ -30,6 +32,10 @@ class GetCartItems(APIView):
             serializer = CartItemSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
+
+                cartitems = CartItem.objects.filter(cart=carts)
+                carts.total = sum([i.quantity*i.price for i in cartitems])
+                carts.save()
 
                 return Response(serializero.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -53,6 +59,13 @@ class CartItemDetail(APIView):
     def delete(self, request, pk, format=None):
         cartitem = CartItem.objects.get(pk=pk)
         cartitem.delete()
+
+        carts = Cart.objects.get(pk=cartitem.cart.trackingnumber)
+        cartitems = CartItem.objects.filter(cart=carts)
+        carts.total = sum([i.quantity*i.price for i in cartitems])
+
+        carts.save()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
