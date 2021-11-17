@@ -11,26 +11,43 @@ from django.views import generic
 
 class GetCartItems(APIView):
     def get(self, request, format=None, **kwargs):
-        carts = Cart.objects.get(pk=self.kwargs['cart'])
+        try:
+            carts = Cart.objects.get(pk=self.kwargs['cart'])
+        except:
+            return Response('Cart not found', status=status.HTTP_400_BAD_REQUEST)
+
         cartitems = CartItem.objects.filter(cart=carts)
+        if len(cartitems) == 0:
+            return Response('No items in cart', status=status.HTTP_200_OK)
         serializer = CartItemSerializer(cartitems, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None, **kwargs):
 
-        carts = Cart.objects.get(pk=self.kwargs['cart'])
+        try:
+            carts = Cart.objects.get(pk=self.kwargs['cart'])
+        except:
+            return Response('Cart not found', status=status.HTTP_400_BAD_REQUEST)
+
         cartitems = CartItem.objects.filter(cart=carts)
         duped = False
 
         for item in cartitems:
             if item.product.id == request.data['product']:
-                item.quantity += request.data['quantity']
+
+                try:
+                    item.quantity += request.data['quantity']
+                except:
+                    return Response('Quantity not properly formatted', status=status.HTTP_400_BAD_REQUEST)
+                if request.data['quantity'] <= 0:
+                    return Response('Quantity cannot be less than zero', status=status.HTTP_400_BAD_REQUEST)
                 item.save()
+
                 duped = True
                 carts.total = sum([i.quantity*i.price for i in cartitems])
-                carts.save()
 
-        serializero = CartItemSerializer(cartitems, many=True)
+                carts.save()
+                break
 
         if not duped:
             request.data['cart'] = self.kwargs['cart']
@@ -45,10 +62,15 @@ class GetCartItems(APIView):
                 return Response(serializero.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        serializero = CartItemSerializer(cartitems, many=True)
         return Response(serializero.data, status=status.HTTP_206_PARTIAL_CONTENT)
 
     def patch(self, request, format=None, **kwargs):
-        cart = Cart.objects.get(pk=self.kwargs['cart'])
+        try:
+            cart = Cart.objects.get(pk=self.kwargs['cart'])
+        except:
+            return Response('Cart not found', status=status.HTTP_400_BAD_REQUEST)
+
         if type(list(request.data.values())[0]) == bool and len(list(request.data.values())) == 1:
             serializer = CartSerializer(
                 cart, data=request.data, partial=True)
@@ -62,7 +84,10 @@ class GetCartItems(APIView):
 class CartItemDetail(APIView):
 
     def delete(self, request, pk, format=None):
-        cartitem = CartItem.objects.get(pk=pk)
+        try:
+            cartitem = CartItem.objects.get(pk=pk)
+        except:
+            return Response('Cart item does not exist', status=status.HTTP_400_BAD_REQUEST)
         cartitem.delete()
 
         carts = Cart.objects.get(pk=cartitem.cart.trackingnumber)
@@ -117,7 +142,11 @@ class CurrentCarts(generic.ListView):
 
 def convertSale(request, pk):
 
-    cart = Cart.objects.get(pk=pk)
+    try:
+        cart = Cart.objects.get(pk=pk)
+    except:
+        return Response('Cart not found', status=status.HTTP_400_BAD_REQUEST)
+
     p = CartItem.objects.filter(cart=cart)
 
     for item in p:
@@ -125,6 +154,8 @@ def convertSale(request, pk):
                   subtotal=item.subtotal, description=item.description)
         a.save()
         p.delete()
+
+    cart.delete()
 
     return redirect('index')
 

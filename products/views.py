@@ -12,6 +12,10 @@ class PostMultiple(APIView):
 
         rejected = []
         accepted = []
+
+        if len(request.data) == 0:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+
         for req in request.data:
 
             serializer = ProductSerializer(data=req)
@@ -21,8 +25,9 @@ class PostMultiple(APIView):
                 accepted.append(serializer.data)
             else:
                 rejected.append(serializer.data)
+
         if len(rejected) == 0:
             return Response(accepted, status=status.HTTP_201_CREATED)
         elif len(accepted) == 0:
             return Response(rejected, status=status.HTTP_400_BAD_REQUEST)
-        return Response(rejected, status=status.HTTP_207_MULTI_STATUS)
+        return Response([rejected, accepted], status=status.HTTP_207_MULTI_STATUS)
