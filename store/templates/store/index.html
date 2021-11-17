@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+{% for object in object_list %}
+        <h4>Cart Number: {{object.cart.trackingnumber}}</h4>
+        <table>
+        <tr>
+            
+            <td>Quantity</td>
+            <td>Description</td>
+            <td>Price</td>
+            <td>Subtotal</td>
+
+        </tr>
+        {% for item in object.elements %}
+            <tr>
+                <td> {{item.quantity}} </td>
+                <td> {{item.description}} </td>
+                <td> {{item.price}} </td>      
+                <td> {{item.subtotal}} </td>     
+            </tr>
+        {% endfor %}
+        <tr>
+            <td>  </td>
+            <td>  </td>
+            <td> TOTAL </td>      
+            <td> {{object.cart.total}} </td>     
+        </tr>
+
+        </table>
+    {% endfor %}
+
+</body>
+</html>
