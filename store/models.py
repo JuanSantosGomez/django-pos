@@ -33,7 +33,7 @@ class Store(models.Model):
 
 class Cart(UUIDModel):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
-    sold = models.BooleanField(default=False)
+    sold = models.BooleanField(default=False, db_index=True,)
     total = models.FloatField(default=0)
 
     def __str__(self):
