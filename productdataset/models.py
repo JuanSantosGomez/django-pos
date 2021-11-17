@@ -24,3 +24,8 @@ class ProductSetObject(models.Model):
 
     def __str__(self):
         return self.product.description
+
+    def save(self, *args, **kwargs):
+        if not self.nickname_check:
+            self.nickname = self.product.description
+        return super(ProductSetObject).save(*args, **kwargs)

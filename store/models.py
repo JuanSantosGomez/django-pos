@@ -39,6 +39,11 @@ class Cart(UUIDModel):
     def __str__(self):
         return f"{self.trackingnumber}"
 
+    def save(self, *args, **kwargs):
+        cartitems = CartItem.objects.filter(cart=self)
+        self.total = sum([i.quantity*i.price for i in cartitems])
+        return super(Cart, self).save(*args, **kwargs)
+
     def get_convert_sale_url(self):
         return reverse('convertsale', kwargs={'pk': self.trackingnumber})
 
@@ -56,10 +61,19 @@ class CartItem(models.Model):
         return f"Cart-{self.cart.trackingnumber} - {self.product.product.description}"
 
     def save(self, *args, **kwargs):
+        self.mergediffs()
         self.price = self.product.price
         self.subtotal = self.price*self.quantity
         self.description = self.product.product.description
+        self.cart.save()
         return super(CartItem, self).save(*args, **kwargs)
+
+    def mergediffs(self):
+        a = CartItem.objects.filter(
+            product=self.product).filter(cart=self.cart)
+        for item in a:
+            self.quantity += item.quantity
+            a.delete()
 
 
 class Sales(models.Model):

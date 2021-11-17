@@ -1,26 +1,25 @@
 from re import I
 from rest_framework import routers
 
-from store.views import GetCartItems
-from .api import CartViewSet
-from .views import CartItemDetail, CurrentCarts, SalesView, StoreDetail, StoreList, convertSale
+from .apiviews import CartItemAPIDetail, GetCartItemsView, CartDeleteView
+from .apiviewsets import CartViewSet, StoreViewSet
+from .views import CurrentCarts, SalesView, convertSale
 from django.urls import path
 
 router = routers.DefaultRouter()
-router.register("api/store/carts", CartViewSet, "carts")
+router.register("api/cart", CartViewSet, "cartsAPI")
+router.register("api/store", StoreViewSet, "storeAPI")
 
 urlpatterns = [
 
     # The scanner app API Views
 
-    path('api/store/cartitems/<cart>',
-         GetCartItems.as_view(), name='getcartitems'),
-    path('api/store/cartitems/items/<pk>',
-         CartItemDetail.as_view(), name='cartitems'),
-    path('api/store/<pk>',
-         StoreDetail.as_view(), name='store'),
-    path('api/store/',
-         StoreList.as_view(), name='storelist'),
+    path('api/cartitems/items/<pk>',
+         CartItemAPIDetail.as_view(), name='cartitemdetailsAPI'),
+    path('api/cartitems/<cart>',
+         GetCartItemsView.as_view(), name='cartitemsAPI'),
+    path('api/cart/<pk>',
+         CartDeleteView.as_view(), name='cartdeleteAPI'),
 
 
     # The stores app views
@@ -32,4 +31,5 @@ urlpatterns = [
     path('sales', SalesView.as_view(), name='sales'),
 
 ]
+
 urlpatterns += router.urls

@@ -29,7 +29,7 @@ class ProductDetail(APIView):
 
     def get(self, request, format=None, **kwargs):
         product = self.get_object(
-            barcode=kwargs["barcode"], productset=kwargs["cart"])
+            barcode=kwargs["barcode"], cart=kwargs["cart"])
         serializer = ItemSerializer(product)
 
         return Response(serializer.data)
