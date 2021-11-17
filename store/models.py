@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.deletion import SET_NULL
 from django.db.models.fields.related import ForeignKey
-
+from django.urls import reverse
 
 from productdataset.models import ProductSet, ProductSetObject
 # Create your models here.
@@ -39,6 +39,9 @@ class Cart(UUIDModel):
     def __str__(self):
         return f"{self.trackingnumber}"
 
+    def get_convert_sale_url(self):
+        return reverse('convertsale', kwargs={'pk': self.trackingnumber})
+
 
 class CartItem(models.Model):
     product = models.ForeignKey(
@@ -57,3 +60,12 @@ class CartItem(models.Model):
         self.subtotal = self.price*self.quantity
         self.description = self.product.product.description
         return super(CartItem, self).save(*args, **kwargs)
+
+
+class Sales(models.Model):
+    price = models.FloatField(null=True, default=0.0, editable=False)
+    quantity = models.PositiveIntegerField(editable=False)
+    cart = models.CharField(max_length=36, editable=False)
+    added = models.DateTimeField(auto_now_add=True)
+    subtotal = models.FloatField(default=0, editable=False)
+    description = models.TextField(default=' ', editable=False)

@@ -10,8 +10,7 @@
 </head>
 <body>
 
-{% for object in object_list %}
-        <h4>Cart Number: {{object.cart.trackingnumber}} sold? : {{object.cart.sold}}</h4>
+
         <table>
         <tr>
             
@@ -19,14 +18,19 @@
             <td>Description</td>
             <td>Price</td>
             <td>Subtotal</td>
+            <td>added</td>
+            <td>cart</td>
 
         </tr>
-        {% for item in object.elements %}
+        {% for item in object_list %}
             <tr>
                 <td> {{item.quantity}} </td>
                 <td> {{item.description}} </td>
                 <td> {{item.price}} </td>      
-                <td> {{item.subtotal}} </td>     
+                <td> {{item.subtotal}} </td>   
+                <td> {{item.added}} </td>
+                <td> {{item.cart}} </td>
+                
             </tr>
         {% endfor %}
         <tr>
@@ -37,18 +41,6 @@
         </tr>
 
         </table>
-
-        {% if object.cart.sold %}
-
-            <form action={{ object.cart.get_convert_sale_url }} method='GET'>
-
-                <button type="submit">Confirm Checkout</button>
-
-            </form>
-
-        {% endif %}
-
-    {% endfor %}
 
 </body>
 </html>

@@ -1,6 +1,7 @@
+from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from store.models import Cart, CartItem, Store
+from store.models import Cart, CartItem, Sales, Store
 from store.serializers import CartItemSerializer, CartSerializer, StoreListSerializer, StoreSerializer
 from rest_framework import status
 from django.views import generic
@@ -16,9 +17,11 @@ class GetCartItems(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None, **kwargs):
+
         carts = Cart.objects.get(pk=self.kwargs['cart'])
         cartitems = CartItem.objects.filter(cart=carts)
         duped = False
+
         for item in cartitems:
             if item.product.id == request.data['product']:
                 item.quantity += request.data['quantity']
@@ -30,6 +33,7 @@ class GetCartItems(APIView):
         serializero = CartItemSerializer(cartitems, many=True)
 
         if not duped:
+            request.data['cart'] = self.kwargs['cart']
             serializer = CartItemSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -37,7 +41,7 @@ class GetCartItems(APIView):
                 cartitems = CartItem.objects.filter(cart=carts)
                 carts.total = sum([i.quantity*i.price for i in cartitems])
                 carts.save()
-
+                serializero = CartItemSerializer(cartitems, many=True)
                 return Response(serializero.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -109,3 +113,23 @@ class CurrentCarts(generic.ListView):
                     {'cart': item.cart, 'elements': [item], 'total': item.subtotal})
         context['object_list'] = new_object_list
         return context
+
+
+def convertSale(request, pk):
+
+    cart = Cart.objects.get(pk=pk)
+    p = CartItem.objects.filter(cart=cart)
+
+    for item in p:
+        a = Sales(price=item.price, quantity=item.quantity, cart=item.cart.trackingnumber,
+                  subtotal=item.subtotal, description=item.description)
+        a.save()
+        p.delete()
+
+    return redirect('index')
+
+
+class SalesView(generic.ListView):
+
+    template_name = 'store/sales.html'
+    model = Sales

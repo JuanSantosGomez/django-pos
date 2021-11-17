@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from store.views import GetCartItems
 from .api import CartViewSet
-from .views import CartItemDetail, CurrentCarts, StoreDetail, StoreList
+from .views import CartItemDetail, CurrentCarts, SalesView, StoreDetail, StoreList, convertSale
 from django.urls import path
 
 router = routers.DefaultRouter()
@@ -25,7 +25,11 @@ urlpatterns = [
 
     # The stores app views
 
-    path('site/store/', CurrentCarts.as_view(), name='index')
+    path('site/store/', CurrentCarts.as_view(), name='index'),
+
+    path('convert/sale/<pk>', convertSale, name='convertsale'),
+
+    path('sales', SalesView.as_view(), name='sales'),
 
 ]
 urlpatterns += router.urls
