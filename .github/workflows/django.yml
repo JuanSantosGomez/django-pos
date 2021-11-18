@@ -33,5 +33,5 @@ jobs:
       - uses: actions/checkout@master
       - uses: matt-ball/newman-action@master
         with:
-          collection: DjangoPOS.postman_collection
-          environment: DjangoPOS.postman_environment
+          collection: DjangoPOS.postman_collection.json
+          environment: DjangoPOS.postman_environment.json
