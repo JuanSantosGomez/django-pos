@@ -30,8 +30,8 @@ jobs:
   newman:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@develop
-      - uses: matt-ball/newman-action@develop
+      - uses: actions/checkout@master
+      - uses: matt-ball/newman-action@master
         with:
           collection: DjangoPOS.postman_collection
           environment: DjangoPOS.postman_environment
