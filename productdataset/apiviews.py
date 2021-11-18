@@ -1,13 +1,12 @@
-from store.models import Cart, Store
-from .models import ProductSet, ProductSetObject
+from store.models import Cart
+from .models import ProductSetObject
 from products.models import Product
 from .serializers import ItemSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from store.models import Cart
-from store.models import Store
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 
@@ -15,6 +14,7 @@ class ProductDetail(APIView):
     """
     Retrieve, update or delete a snippet instance.
     """
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, barcode, cart):
         try:

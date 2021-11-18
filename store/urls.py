@@ -18,8 +18,7 @@ urlpatterns = [
          CartItemAPIDetail.as_view(), name='cartitemdetailsAPI'),
     path('api/cartitems/<cart>',
          GetCartItemsView.as_view(), name='cartitemsAPI'),
-    path('api/cart/<pk>',
-         CartDeleteView.as_view(), name='cartdeleteAPI'),
+
 
 
     # The stores app views

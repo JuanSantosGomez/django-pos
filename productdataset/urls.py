@@ -1,4 +1,4 @@
-from .views import ProductDetail
+from .apiviews import ProductDetail
 from django.urls import path
 
 urlpatterns = [

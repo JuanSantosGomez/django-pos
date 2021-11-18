@@ -4,9 +4,12 @@ from store.serializers import CartItemSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 
 class GetCartItemsView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None, **kwargs):
 
         carts = get_object_or_404(Cart, pk=self.kwargs['cart'])
@@ -33,14 +36,8 @@ class GetCartItemsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CartDeleteView(APIView):
-    def delete(self, request, pk, format=None):
-        cart = get_object_or_404(Cart, pk=self.kwargs['pk'])
-        cart.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class CartItemAPIDetail(APIView):
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request, pk, format=None):
         cartitem = get_object_or_404(CartItem, pk=self.kwargs['pk'])

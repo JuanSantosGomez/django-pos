@@ -1,16 +1,17 @@
 from .models import Cart, Store
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from .serializers import CartSerializer, StoreSerializer
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.permissions import IsAuthenticated
 
 
-class CartViewSet(viewsets.GenericViewSet, CreateModelMixin, ListModelMixin, UpdateModelMixin):
+class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
-    permissions = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class StoreViewSet(viewsets.GenericViewSet, ListModelMixin, RetrieveModelMixin):
     queryset = Store.objects.all()
     serializer_class = StoreSerializer
-    permissions = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
