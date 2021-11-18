@@ -1,0 +1,481 @@
+{
+	"info": {
+		"_postman_id": "b6ac226c-be42-449c-bfd6-55cdb7f74c50",
+		"name": "DjangoPOS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Barcode Scan",
+			"item": [
+				{
+					"name": "Get barcodes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"postman.setEnvironmentVariable(\"barcode1\",jsonData[0].barcode);\r",
+									"postman.setEnvironmentVariable(\"barcode2\",jsonData[1].barcode);\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Barcodes retrieved\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.length).to.greaterThan(1);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/products",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Store",
+			"item": [
+				{
+					"name": "Store Choose",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"store\",jsonData[0].id);\r",
+									"\r",
+									"pm.test(\"Stores retrieved\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0].id).to.greaterThan(-1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/store/",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"store",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Identify",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Stores retrieved\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.gt(-1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/store/{{store}}",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"store",
+								"{{store}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "New Cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"tracking\",jsonData.trackingnumber);\r",
+									"var head = jsonData.trackingnumber\r",
+									"pm.test(\"Successfully added Cart No. \"+head, function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"store\":{{store}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainurl}}api/cart/",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cart",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCarts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successfully obtained Carts\", function () {\r",
+									"    var jsonData = JSON.parse(responseBody);\r",
+									"    pm.expect(jsonData.length).to.be.gt(-1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/cart",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/cart/{{tracking}}",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cart",
+								"{{tracking}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Scan code 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"scanned\",jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}product/check/{{barcode1}}/{{tracking}}",
+							"host": [
+								"{{mainurl}}product"
+							],
+							"path": [
+								"check",
+								"{{barcode1}}",
+								"{{tracking}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Cart Item 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"itemid\",jsonData[0].id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product\": {{scanned}},\r\n    \"quantity\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainurl}}api/cartitems/{{tracking}}",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cartitems",
+								"{{tracking}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Scan code 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"scanned\",jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}product/check/{{barcode2}}/{{tracking}}",
+							"host": [
+								"{{mainurl}}product"
+							],
+							"path": [
+								"check",
+								"{{barcode2}}",
+								"{{tracking}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Cart Item 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"itemid\",jsonData[0].id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product\": {{scanned}},\r\n    \"quantity\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainurl}}api/cartitems/{{tracking}}",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cartitems",
+								"{{tracking}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/cartitems/{{tracking}}",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cartitems",
+								"{{tracking}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cart Item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/cartitems/items/{{itemid}}",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cartitems",
+								"items",
+								"{{itemid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout Cart",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sold\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainurl}}api/cart/{{tracking}}/",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cart",
+								"{{tracking}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{mainurl}}api/cart/{{tracking}}/",
+							"host": [
+								"{{mainurl}}api"
+							],
+							"path": [
+								"cart",
+								"{{tracking}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "qweqweqwe",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "popotses",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
