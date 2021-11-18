@@ -1,7 +1,7 @@
 from re import I
 from rest_framework import routers
 
-from .apiviews import CartItemAPIDetail, GetCartItemsView, CartDeleteView
+from .apiviews import CartItemAPIDetail, GetCartItemsView
 from .apiviewsets import CartViewSet, StoreViewSet
 from .views import CurrentCarts, SalesView, convertSale
 from django.urls import path
