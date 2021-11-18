@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     # The following apps are required:
     'django.contrib.sites',
 
+    # CORS
+    'corsheaders',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
     'products',
     'rest_framework',
     'productdataset',
+
     'store'
 ]
 
@@ -59,7 +63,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 ROOT_URLCONF = 'DjangoPOS.urls'
 
