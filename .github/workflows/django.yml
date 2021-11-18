@@ -3,8 +3,6 @@ name: Django CI
 on:
   push:
     branches: [develop]
-  pull_request:
-    branches: [master]
 
 jobs:
   build:
@@ -30,7 +28,7 @@ jobs:
   newman:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@develop
       - uses: matt-ball/newman-action@master
         with:
           collection: DjangoPOS.postman_collection.json
